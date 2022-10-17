@@ -8,7 +8,7 @@ using namespace std;
 class RowColumnCrypto
 {
 protected:
-  string mainAlgorithm(string data, u_int columnLength, u_int rowLength, int rest = 0);
+  string mainAlgorithm(string data, u_int columnLength);
 
 public:
   string encrypt(string data, u_int key);
@@ -18,46 +18,43 @@ public:
 string RowColumnCrypto::encrypt(string data, u_int key)
 {
   const u_int dataLength = data.length();
-  const u_int rows = ceil((double)dataLength / key);
+  const u_int chunkLength = key * key;
+  const u_int count = dataLength / chunkLength;
+  string result = "";
 
-  return mainAlgorithm(data, key, rows);
+  for (int i = 0; i < count; i++)
+  {
+    const u_int start = i * chunkLength;
+    result += mainAlgorithm(data.substr(start, start + chunkLength), key);
+  }
+
+  const u_int lastPartStart = count * chunkLength;
+  result += data.substr(lastPartStart, lastPartStart + chunkLength);
+  return result;
 }
 
 string RowColumnCrypto::decrypt(string data, u_int key)
 {
-  const u_int dataLength = data.length();
-  const u_int rows = ceil((double)dataLength / key);
-  const u_int rest = (rows * key) - dataLength;
-
-  return mainAlgorithm(data, rows, key, rest);
+  return encrypt(data, key);
 }
 
-string RowColumnCrypto::mainAlgorithm(string data, u_int columnLength, u_int rowLength, int rest)
+string RowColumnCrypto::mainAlgorithm(string data, u_int key)
 {
   string result = "";
-  u_int deviation = 0;
-  const u_int diff = rowLength - rest;
 
-  for (u_int c = 0; c < columnLength; c++)
+  for (u_int c = 0; c < key; c++)
   {
-    for (u_int r = 0; r < rowLength; r++)
+    for (u_int r = 0; r < key; r++)
     {
-      // (rowIndex * columnLength) + columnIndex
-      const u_int index = (r * columnLength) + c;
+      // (rowIndex * key) + columnIndex
+      const u_int index = (r * key) + c;
 
-      // if (rest && c == columnLength - 1)
-      // {
-      //   if (diff >= r)
-      //   {
-      //     deviation++;
-      //     continue;
-      //   }
-      // }
-
-      if (index - deviation >= data.length())
+      if (index >= data.length() || !data[index])
+      {
         continue;
+      }
 
-      result += data[index - deviation];
+      result += data[index];
     }
   }
 
