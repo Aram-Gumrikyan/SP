@@ -49,6 +49,59 @@ int secondExercise(int numbers[], int numbersLength)
   return realSum - fakeSum;
 }
 
+string en = "AaBbCc1234";
+string de = "cCAaBb2143";
+
+string encodeShablon(string text)
+{
+  for (int i = 0; i <= text.length(); i++)
+  {
+    for (int j = 0; j <= en.length(); j++)
+    {
+      if (text[i] == en[j])
+      {
+        text[i] = de[j];
+        break;
+      }
+    }
+  }
+  return text;
+}
+string decodeShablon(string text)
+{
+  for (int i = 0; i <= text.length(); i++)
+  {
+    for (int j = 0; j <= en.length(); j++)
+    {
+      if (text[i] == de[j])
+      {
+        text[i] = en[j];
+        break;
+      }
+    }
+  }
+  return text;
+}
+
+string RLE_Algorithm(string str)
+{
+  string result = "";
+  int n = str.length();
+  for (int i = 0; i < n; i++)
+  {
+
+    int count = 1;
+    while (i < n - 1 && str[i] == str[i + 1])
+    {
+      count++;
+      i++;
+    }
+    result += (str[i] + to_string(count));
+  }
+
+  return result;
+}
+
 void test1()
 {
   const int res1 = greatestCommonDivisor(6936, 1200);
@@ -93,6 +146,9 @@ int main()
   const string decryptedData = Crypto.decrypt(encryptedData, key);
   cout << encryptedData << endl;
   cout << decryptedData << endl;
+  cout << encodeShablon("abc42A") << endl;
+  cout << decodeShablon("Cab31c") << endl;
+  cout << RLE_Algorithm("aaabaaabbba") << endl;
 
   test1();
   test2();
