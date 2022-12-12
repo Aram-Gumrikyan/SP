@@ -11,7 +11,7 @@ int main()
   test1();
   test2();
 
-  const u_int key = 3;
+  const int key = 3;
   RowColumnCrypto rowColumnCrypto;
   const string encodedData = rowColumnCrypto.encode("123456789ABCDEFGHI", key);
   const string decodedData = rowColumnCrypto.decode(encodedData, key);
